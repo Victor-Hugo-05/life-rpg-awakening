@@ -1,11 +1,44 @@
 
+// Type definitions
+export interface Character {
+  name: string;
+  attributes: {
+    [key: string]: {
+      xp: number;
+    };
+  };
+  missions: Mission[];
+}
+
+export interface Mission {
+  title: string;
+  description: string;
+  xp_reward: number;
+  related_attributes: string[];
+  completed: boolean;
+}
+
+export interface AttributeProgress {
+  xp: number;
+  level: number;
+  xp_to_next_level: number;
+  next_level_at: number | null;
+}
+
+export interface MissionCompletionResponse {
+  message: string;
+  attribute_progress: {
+    [key: string]: AttributeProgress;
+  };
+}
+
 const API_BASE = 'http://127.0.0.1:5000';
 
 export const api = {
   async getCharacter(name: string): Promise<Character> {
     const response = await fetch(`${API_BASE}/character/${name}`);
     if (!response.ok) {
-      throw new Error('Character not found');
+      throw new Error('Personagem não encontrado');
     }
     return response.json();
   },
@@ -21,7 +54,7 @@ export const api = {
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to create character');
+      throw new Error(error.error || 'Falha ao criar personagem');
     }
     
     return response.json();
@@ -46,7 +79,7 @@ export const api = {
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to add mission');
+      throw new Error(error.error || 'Falha ao adicionar missão');
     }
     
     return response.json();
@@ -66,7 +99,7 @@ export const api = {
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to complete mission');
+      throw new Error(error.error || 'Falha ao completar missão');
     }
     
     return response.json();
@@ -82,11 +115,9 @@ export const api = {
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to reset missions');
+      throw new Error(error.error || 'Falha ao resetar missões');
     }
     
     return response.json();
   },
 };
-
-export type { Character, Mission, AttributeProgress, MissionCompletionResponse };

@@ -65,7 +65,7 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
         className="w-full bg-white text-black hover:bg-gray-200"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Add New Mission
+        Adicionar Nova Missão
       </Button>
     );
   }
@@ -73,20 +73,20 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
   return (
     <Card className="bg-gray-900 border-gray-700">
       <CardHeader>
-        <CardTitle className="text-white">Create New Mission</CardTitle>
+        <CardTitle className="text-white">Criar Nova Missão</CardTitle>
       </CardHeader>
       
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              Mission Title *
+              Título da Missão *
             </label>
             <Input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Morning Workout, Read 30 minutes"
+              placeholder="ex: Treino Matinal, Ler 30 minutos"
               className="bg-black border-gray-600 text-white placeholder-gray-400"
               required
             />
@@ -94,12 +94,12 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              Description
+              Descrição
             </label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Optional mission details..."
+              placeholder="Detalhes opcionais da missão..."
               className="bg-black border-gray-600 text-white placeholder-gray-400"
               rows={3}
             />
@@ -107,7 +107,7 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              XP Reward
+              Recompensa XP
             </label>
             <Input
               type="number"
@@ -121,7 +121,7 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Related Attributes *
+              Atributos Relacionados *
             </label>
             <div className="grid grid-cols-2 gap-3">
               {attributes.map((attr) => (
@@ -150,7 +150,7 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
               disabled={!title.trim() || selectedAttributes.length === 0 || isLoading}
               className="flex-1 bg-white text-black hover:bg-gray-200"
             >
-              {isLoading ? 'Creating...' : 'Create Mission'}
+              {isLoading ? 'Criando...' : 'Criar Missão'}
             </Button>
             
             <Button
@@ -159,7 +159,7 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
               onClick={() => setIsOpen(false)}
               className="border-gray-600 text-white hover:bg-gray-800"
             >
-              Cancel
+              Cancelar
             </Button>
           </div>
         </form>

@@ -19,24 +19,24 @@ const Index = () => {
         await api.getCharacter(name);
         setCurrentCharacter(name);
         toast({
-          title: "Welcome back!",
-          description: `Character "${name}" loaded successfully.`,
+          title: "Bem-vindo de volta!",
+          description: `Personagem "${name}" carregado com sucesso.`,
         });
       } catch (error) {
         // If character doesn't exist, create it
-        console.log('Character not found, creating new one...');
+        console.log('Personagem não encontrado, criando novo...');
         await api.createCharacter(name);
         setCurrentCharacter(name);
         toast({
-          title: "Character Created!",
-          description: `Welcome to your RPG journey, ${name}!`,
+          title: "Personagem Criado!",
+          description: `Bem-vindo à sua jornada RPG, ${name}!`,
         });
       }
     } catch (error) {
-      console.error('Error with character:', error);
+      console.error('Erro com personagem:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to load or create character",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao carregar ou criar personagem",
         variant: "destructive",
       });
     } finally {

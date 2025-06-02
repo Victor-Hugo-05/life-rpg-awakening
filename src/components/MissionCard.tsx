@@ -64,13 +64,13 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onComplete, isLoadin
             disabled={isLoading}
             className="w-full bg-white text-black hover:bg-gray-200"
           >
-            {isLoading ? 'Completing...' : 'Complete Mission'}
+            {isLoading ? 'Completando...' : 'Completar Missão'}
           </Button>
         )}
         
         {mission.completed && (
           <div className="text-center text-green-400 font-medium text-sm">
-            ✓ Mission Completed
+            ✓ Missão Completada
           </div>
         )}
       </CardContent>

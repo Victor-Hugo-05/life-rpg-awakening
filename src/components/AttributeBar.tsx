@@ -20,7 +20,7 @@ const AttributeBar: React.FC<AttributeBarProps> = ({ name, xp, icon }) => {
           <span className="font-semibold text-white">{name}</span>
         </div>
         <div className="text-right">
-          <div className="text-xl font-bold text-white">LV {level}</div>
+          <div className="text-xl font-bold text-white">NV {level}</div>
           <div className="text-xs text-gray-400">{xp} XP</div>
         </div>
       </div>
@@ -33,7 +33,7 @@ const AttributeBar: React.FC<AttributeBarProps> = ({ name, xp, icon }) => {
       </div>
       
       <div className="text-xs text-gray-400 text-right">
-        {xpToNext > 0 ? `${xpToNext} XP to next level` : 'MAX LEVEL'}
+        {xpToNext > 0 ? `${xpToNext} XP para próximo nível` : 'NÍVEL MÁXIMO'}
       </div>
     </div>
   );

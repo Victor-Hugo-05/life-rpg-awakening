@@ -8,6 +8,7 @@ import { User, RotateCcw, LogOut } from 'lucide-react';
 import AttributeBar from './AttributeBar';
 import MissionCard from './MissionCard';
 import MissionForm from './MissionForm';
+import CharacterIllustration from './CharacterIllustration';
 import { api, Character, Mission } from '@/services/api';
 
 interface DashboardProps {
@@ -27,10 +28,10 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
       const data = await api.getCharacter(characterName);
       setCharacter(data);
     } catch (error) {
-      console.error('Error loading character:', error);
+      console.error('Erro ao carregar personagem:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to load character",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao carregar personagem",
         variant: "destructive",
       });
     } finally {
@@ -48,17 +49,16 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
       const result = await api.completeMission(characterName, missionTitle);
       
       toast({
-        title: "Mission Completed! 🎉",
+        title: "Missão Completada! 🎉",
         description: result.message,
       });
       
-      // Reload character data to get updated attributes and mission status
       await loadCharacter();
     } catch (error) {
-      console.error('Error completing mission:', error);
+      console.error('Erro ao completar missão:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to complete mission",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao completar missão",
         variant: "destructive",
       });
     } finally {
@@ -77,16 +77,16 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
       await api.addMission(characterName, mission);
       
       toast({
-        title: "Mission Added!",
-        description: `"${mission.title}" has been added to your quest log.`,
+        title: "Missão Adicionada!",
+        description: `"${mission.title}" foi adicionada ao seu registro de missões.`,
       });
       
       await loadCharacter();
     } catch (error) {
-      console.error('Error adding mission:', error);
+      console.error('Erro ao adicionar missão:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add mission",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao adicionar missão",
         variant: "destructive",
       });
     } finally {
@@ -100,16 +100,16 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
       const result = await api.resetMissions();
       
       toast({
-        title: "Missions Reset!",
+        title: "Missões Resetadas!",
         description: result.message,
       });
       
       await loadCharacter();
     } catch (error) {
-      console.error('Error resetting missions:', error);
+      console.error('Erro ao resetar missões:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to reset missions",
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Falha ao resetar missões",
         variant: "destructive",
       });
     } finally {
@@ -122,7 +122,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Loading your character...</p>
+          <p>Carregando seu personagem...</p>
         </div>
       </div>
     );
@@ -132,9 +132,9 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
-          <p>Character not found</p>
+          <p>Personagem não encontrado</p>
           <Button onClick={onLogout} className="mt-4">
-            Go Back
+            Voltar
           </Button>
         </div>
       </div>
@@ -160,7 +160,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
             <User className="h-8 w-8" />
             <div>
               <h1 className="text-3xl font-bold">{character.name}</h1>
-              <p className="text-gray-400">Level up your life</p>
+              <p className="text-gray-400">Evolua sua vida</p>
             </div>
           </div>
           
@@ -169,27 +169,34 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
               onClick={handleResetMissions}
               disabled={isActionLoading}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-800"
+              className="border-gray-600 text-gray-900 bg-white hover:bg-gray-200"
             >
               <RotateCcw className="h-4 w-4 mr-2" />
-              Reset Missions
+              Resetar Missões
             </Button>
             
             <Button
               onClick={onLogout}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-800"
+              className="border-gray-600 text-gray-900 bg-white hover:bg-gray-200"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              Sair
             </Button>
           </div>
         </div>
 
+        {/* Character Illustration */}
+        {character.attributes['Força'] && (
+          <div className="mb-6">
+            <CharacterIllustration strengthXp={character.attributes['Força'].xp} />
+          </div>
+        )}
+
         {/* Attributes */}
         <Card className="bg-gray-900 border-gray-700 mb-6">
           <CardHeader>
-            <CardTitle className="text-white">Attributes</CardTitle>
+            <CardTitle className="text-white">Atributos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -209,13 +216,13 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
         <Tabs defaultValue="active" className="space-y-4">
           <TabsList className="bg-gray-900 border-gray-700">
             <TabsTrigger value="active" className="data-[state=active]:bg-white data-[state=active]:text-black">
-              Active Missions ({activeMissions.length})
+              Missões Ativas ({activeMissions.length})
             </TabsTrigger>
             <TabsTrigger value="completed" className="data-[state=active]:bg-white data-[state=active]:text-black">
-              Completed ({completedMissions.length})
+              Completadas ({completedMissions.length})
             </TabsTrigger>
             <TabsTrigger value="new" className="data-[state=active]:bg-white data-[state=active]:text-black">
-              Add Mission
+              Adicionar Missão
             </TabsTrigger>
           </TabsList>
 
@@ -223,7 +230,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
             {activeMissions.length === 0 ? (
               <Card className="bg-gray-900 border-gray-700">
                 <CardContent className="text-center py-8">
-                  <p className="text-gray-400">No active missions. Time to create some!</p>
+                  <p className="text-gray-400">Nenhuma missão ativa. Hora de criar algumas!</p>
                 </CardContent>
               </Card>
             ) : (
@@ -244,7 +251,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
             {completedMissions.length === 0 ? (
               <Card className="bg-gray-900 border-gray-700">
                 <CardContent className="text-center py-8">
-                  <p className="text-gray-400">No completed missions yet. Start your journey!</p>
+                  <p className="text-gray-400">Nenhuma missão completada ainda. Comece sua jornada!</p>
                 </CardContent>
               </Card>
             ) : (
