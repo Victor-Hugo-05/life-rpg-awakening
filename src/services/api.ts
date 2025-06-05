@@ -32,7 +32,7 @@ export interface MissionCompletionResponse {
   };
 }
 
-const API_BASE = 'http://127.0.0.1:5000';
+const API_BASE = 'http://127.0.0.1:5001';
 
 export const api = {
   async getCharacter(name: string): Promise<Character> {
