@@ -1,4 +1,3 @@
-
 // Type definitions
 export interface Character {
   name: string;
@@ -30,6 +29,14 @@ export interface MissionCompletionResponse {
   attribute_progress: {
     [key: string]: AttributeProgress;
   };
+}
+
+export interface MissionTemplate {
+  id: number;
+  title: string;
+  description: string;
+  xp_reward: number;
+  related_attributes: string[];
 }
 
 const API_BASE = 'http://127.0.0.1:5001';
@@ -85,6 +92,26 @@ export const api = {
     return response.json();
   },
 
+  async addMissionFromTemplate(
+    characterName: string,
+    templateId: number
+  ): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE}/character/${characterName}/mission/template`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ template_id: templateId }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Falha ao adicionar missão do template');
+    }
+    
+    return response.json();
+  },
+
   async completeMission(
     characterName: string,
     missionTitle: string
@@ -102,6 +129,14 @@ export const api = {
       throw new Error(error.error || 'Falha ao completar missão');
     }
     
+    return response.json();
+  },
+
+  async getMissionTemplates(): Promise<MissionTemplate[]> {
+    const response = await fetch(`${API_BASE}/missions/templates`);
+    if (!response.ok) {
+      throw new Error('Falha ao carregar templates de missão');
+    }
     return response.json();
   },
 

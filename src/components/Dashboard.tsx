@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +8,7 @@ import AttributeBar from './AttributeBar';
 import MissionCard from './MissionCard';
 import MissionForm from './MissionForm';
 import CharacterIllustration from './CharacterIllustration';
+import MissionTemplateSelector from './MissionTemplateSelector';
 import { api, Character, Mission } from '@/services/api';
 
 interface DashboardProps {
@@ -169,7 +169,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
               onClick={handleResetMissions}
               disabled={isActionLoading}
               variant="outline"
-              className="border-gray-600 text-gray-900 bg-white hover:bg-gray-200"
+              className="border-gray-600 text-white bg-gray-800 hover:bg-gray-700"
             >
               <RotateCcw className="h-4 w-4 mr-2" />
               Resetar Missões
@@ -178,7 +178,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
             <Button
               onClick={onLogout}
               variant="outline"
-              className="border-gray-600 text-gray-900 bg-white hover:bg-gray-200"
+              className="border-gray-600 text-white bg-gray-800 hover:bg-gray-700"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Sair
@@ -222,7 +222,10 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
               Completadas ({completedMissions.length})
             </TabsTrigger>
             <TabsTrigger value="new" className="data-[state=active]:bg-white data-[state=active]:text-black">
-              Adicionar Missão
+              Criar Missão
+            </TabsTrigger>
+            <TabsTrigger value="templates" className="data-[state=active]:bg-white data-[state=active]:text-black">
+              Templates
             </TabsTrigger>
           </TabsList>
 
@@ -272,6 +275,15 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
             <MissionForm
               onSubmit={handleAddMission}
               isLoading={isActionLoading}
+            />
+          </TabsContent>
+
+          <TabsContent value="templates">
+            <MissionTemplateSelector
+              characterName={characterName}
+              onMissionAdded={loadCharacter}
+              isLoading={isActionLoading}
+              setIsLoading={setIsActionLoading}
             />
           </TabsContent>
         </Tabs>
