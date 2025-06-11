@@ -36,7 +36,7 @@ const CharacterIllustration: React.FC<CharacterIllustrationProps> = ({ strengthX
         />
 
         {/* Imagem do óculos sobreposta */}
-        <i
+        <img
           src="/assets/oculos.png"
           alt="Óculos"
           className="absolute top-[12px] left-[38%] w-[30px] h-auto"

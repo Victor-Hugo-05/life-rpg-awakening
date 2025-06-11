@@ -165,15 +165,6 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
           </div>
           
           <div className="flex gap-2">
-            <Button
-              onClick={handleResetMissions}
-              disabled={isActionLoading}
-              variant="outline"
-              className="border-gray-600 text-white bg-gray-800 hover:bg-gray-700"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Resetar Missões
-            </Button>
             
             <Button
               onClick={onLogout}

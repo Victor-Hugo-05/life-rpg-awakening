@@ -39,12 +39,14 @@ export interface MissionTemplate {
   related_attributes: string[];
 }
 
-const API_BASE = 'http://127.0.0.1:5001';
+const API_BASE = 'https://life-rpg-backend.onrender.com/';
 
 export const api = {
   async getCharacter(name: string): Promise<Character> {
     const response = await fetch(`${API_BASE}/character/${name}`);
     if (!response.ok) {
+      const errorText = await response.text(); // ← Veja o HTML real
+      console.error('Erro ao buscar personagem:', errorText);
       throw new Error('Personagem não encontrado');
     }
     return response.json();
