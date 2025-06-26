@@ -1,6 +1,6 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { calculateLevel } from '@/utils/levelCalculator';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface CharacterIllustrationProps {
@@ -25,41 +25,38 @@ const CharacterIllustration: React.FC<CharacterIllustrationProps> = ({ strengthX
     mathPi: true,
     snake: true
   });
+  const [showUnlockNotifications, setShowUnlockNotifications] = useState<string[]>([]);
+  const [isAccessoryManagementOpen, setIsAccessoryManagementOpen] = useState(false);
   const { toast } = useToast();
 
   // Check for newly unlocked accessories
   useEffect(() => {
-    const newUnlocks: string[] = [];
+    const newUnlocks: { name: string; image: string }[] = [];
 
     if (strengthLevel >= 2 && previousLevels.strengthLevel < 2) {
-      newUnlocks.push('Bandana de Força');
+      newUnlocks.push({ name: 'Bandana de Força', image: '/assets/headband.png' });
     }
     if (disciplineLevel >= 2 && previousLevels.disciplineLevel < 2) {
-      newUnlocks.push('Corrente Dourada');
+      newUnlocks.push({ name: 'Corrente Dourada', image: '/assets/golden_chain.png' });
     }
     if (intelligenceLevel >= 2 && previousLevels.intelligenceLevel < 2) {
-      newUnlocks.push('Símbolo Pi');
+      newUnlocks.push({ name: 'Símbolo Pi', image: '/assets/math_pi.png' });
     }
     if (healthLevel >= 2 && previousLevels.healthLevel < 2) {
-      newUnlocks.push('Cobra de Asclépio');
+      newUnlocks.push({ name: 'Cobra de Asclépio', image: '/assets/asclepius_snake.png' });
     }
 
     if (newUnlocks.length > 0) {
-      if (newUnlocks.length === 1) {
-        toast({
-          title: "🎉 Novo Item Desbloqueado!",
-          description: `Você desbloqueou: ${newUnlocks[0]}`,
-        });
-      } else {
-        toast({
-          title: "🎉 Novos Itens Desbloqueados!",
-          description: `Você desbloqueou: ${newUnlocks.join(', ')}`,
-        });
-      }
+      setShowUnlockNotifications(newUnlocks.map(item => item.name));
+      
+      // Hide notifications after 5 seconds
+      setTimeout(() => {
+        setShowUnlockNotifications([]);
+      }, 5000);
     }
 
     setPreviousLevels({ strengthLevel, disciplineLevel, healthLevel, intelligenceLevel });
-  }, [strengthLevel, disciplineLevel, healthLevel, intelligenceLevel, previousLevels, toast]);
+  }, [strengthLevel, disciplineLevel, healthLevel, intelligenceLevel, previousLevels]);
 
   const originalColors = [
     { r: 7, g: 121, b: 185 },  // Azul claro (#0779b9)
@@ -88,10 +85,22 @@ const CharacterIllustration: React.FC<CharacterIllustrationProps> = ({ strengthX
   const getNextUnlockMessage = () => {
     const unlocks = [];
     
-    if (strengthLevel < 2) unlocks.push(`Força nível ${2 - strengthLevel} para Bandana`);
-    if (disciplineLevel < 2) unlocks.push(`Disciplina nível ${2 - disciplineLevel} para Corrente`);
-    if (intelligenceLevel < 2) unlocks.push(`Inteligência nível ${2 - intelligenceLevel} para Símbolo Pi`);
-    if (healthLevel < 2) unlocks.push(`Saúde nível ${2 - healthLevel} para Cobra`);
+    if (strengthLevel < 2) {
+      const levelsNeeded = 2 - strengthLevel;
+      unlocks.push(`Falta ${levelsNeeded === 1 ? 'aumentar 1 nível' : `aumentar ${levelsNeeded} níveis`} de Força para desbloquear a Bandana`);
+    }
+    if (disciplineLevel < 2) {
+      const levelsNeeded = 2 - disciplineLevel;
+      unlocks.push(`Falta ${levelsNeeded === 1 ? 'aumentar 1 nível' : `aumentar ${levelsNeeded} níveis`} de Disciplina para desbloquear a Corrente`);
+    }
+    if (intelligenceLevel < 2) {
+      const levelsNeeded = 2 - intelligenceLevel;
+      unlocks.push(`Falta ${levelsNeeded === 1 ? 'aumentar 1 nível' : `aumentar ${levelsNeeded} níveis`} de Inteligência para desbloquear o Símbolo Pi`);
+    }
+    if (healthLevel < 2) {
+      const levelsNeeded = 2 - healthLevel;
+      unlocks.push(`Falta ${levelsNeeded === 1 ? 'aumentar 1 nível' : `aumentar ${levelsNeeded} níveis`} de Saúde para desbloquear a Cobra`);
+    }
 
     return unlocks.length > 0 ? unlocks[0] : null;
   };
@@ -195,17 +204,46 @@ const CharacterIllustration: React.FC<CharacterIllustrationProps> = ({ strengthX
 
   const nextUnlock = getNextUnlockMessage();
 
+  const getAccessoryImage = (accessoryName: string) => {
+    const imageMap: Record<string, string> = {
+      'Bandana de Força': '/assets/headband.png',
+      'Corrente Dourada': '/assets/golden_chain.png',
+      'Símbolo Pi': '/assets/math_pi.png',
+      'Cobra de Asclépio': '/assets/asclepius_snake.png'
+    };
+    return imageMap[accessoryName];
+  };
+
   return (
-    <div className="bg-gray-900 border border-gray-700 p-6 rounded-lg text-center">
+    <div className="bg-gray-900 border border-gray-700 p-6 rounded-lg text-center relative">
       <h3 className="text-white font-semibold mb-4">Seu Personagem</h3>
+
+      {/* Unlock Notifications */}
+      {showUnlockNotifications.length > 0 && (
+        <div className="absolute top-4 right-4 z-10 space-y-2">
+          {showUnlockNotifications.map((accessoryName, index) => (
+            <div key={index} className="bg-yellow-500 text-black p-3 rounded-lg shadow-lg animate-fade-in flex items-center gap-3 max-w-xs">
+              <img 
+                src={getAccessoryImage(accessoryName)} 
+                alt={accessoryName}
+                className="w-8 h-8 pixel-art"
+              />
+              <div className="text-left">
+                <div className="font-bold text-sm">🎉 Parabéns!</div>
+                <div className="text-xs">Você desbloqueou {accessoryName}!</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="relative mx-auto mb-4">
         <canvas
           ref={canvasRef}
           className="pixel-art mx-auto my-10 block"
           style={{
-            width: '160px',
-            height: '160px',
+            width: '180px',
+            height: '180px',
             display: imageLoaded ? 'block' : 'none',
           }}
         />
@@ -234,53 +272,62 @@ const CharacterIllustration: React.FC<CharacterIllustrationProps> = ({ strengthX
 
       {/* Accessory Management */}
       <div className="mt-4 border-t border-gray-700 pt-4">
-        <h4 className="text-white text-sm font-medium mb-3">Gerenciar Acessórios</h4>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          {strengthLevel >= 2 && (
-            <label className="flex items-center gap-1 text-gray-300">
-              <input
-                type="checkbox"
-                checked={unlockedAccessories.headband}
-                onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, headband: e.target.checked }))}
-                className="w-3 h-3"
-              />
-              Bandana
-            </label>
-          )}
-          {disciplineLevel >= 2 && (
-            <label className="flex items-center gap-1 text-gray-300">
-              <input
-                type="checkbox"
-                checked={unlockedAccessories.chain}
-                onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, chain: e.target.checked }))}
-                className="w-3 h-3"
-              />
-              Corrente
-            </label>
-          )}
-          {intelligenceLevel >= 2 && (
-            <label className="flex items-center gap-1 text-gray-300">
-              <input
-                type="checkbox"
-                checked={unlockedAccessories.mathPi}
-                onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, mathPi: e.target.checked }))}
-                className="w-3 h-3"
-              />
-              Símbolo Pi
-            </label>
-          )}
-          {healthLevel >= 2 && (
-            <label className="flex items-center gap-1 text-gray-300">
-              <input
-                type="checkbox"
-                checked={unlockedAccessories.snake}
-                onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, snake: e.target.checked }))}
-                className="w-3 h-3"
-              />
-              Cobra
-            </label>
-          )}
-        </div>
+        <button
+          onClick={() => setIsAccessoryManagementOpen(!isAccessoryManagementOpen)}
+          className="flex items-center justify-center gap-2 text-white text-sm font-medium mb-3 w-full hover:text-gray-300 transition-colors"
+        >
+          Gerenciar Acessórios
+          {isAccessoryManagementOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
+        
+        {isAccessoryManagementOpen && (
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {strengthLevel >= 2 && (
+              <label className="flex items-center gap-1 text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={unlockedAccessories.headband}
+                  onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, headband: e.target.checked }))}
+                  className="w-3 h-3"
+                />
+                Bandana
+              </label>
+            )}
+            {disciplineLevel >= 2 && (
+              <label className="flex items-center gap-1 text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={unlockedAccessories.chain}
+                  onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, chain: e.target.checked }))}
+                  className="w-3 h-3"
+                />
+                Corrente
+              </label>
+            )}
+            {intelligenceLevel >= 2 && (
+              <label className="flex items-center gap-1 text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={unlockedAccessories.mathPi}
+                  onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, mathPi: e.target.checked }))}
+                  className="w-3 h-3"
+                />
+                Símbolo Pi
+              </label>
+            )}
+            {healthLevel >= 2 && (
+              <label className="flex items-center gap-1 text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={unlockedAccessories.snake}
+                  onChange={(e) => setUnlockedAccessories(prev => ({ ...prev, snake: e.target.checked }))}
+                  className="w-3 h-3"
+                />
+                Cobra
+              </label>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
