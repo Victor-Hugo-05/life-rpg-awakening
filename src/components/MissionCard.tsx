@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Fire } from 'lucide-react';
+import { Check, Flame } from 'lucide-react';
 import { Mission } from '@/services/api';
 
 interface MissionCardProps {
@@ -49,7 +49,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onComplete, isLoadin
           <div className="flex items-center gap-2">
             {mission.streak && mission.streak > 0 && (
               <div className="flex items-center gap-1 text-orange-400">
-                <Fire className="h-4 w-4" />
+                <Flame className="h-4 w-4" />
                 <span className="text-sm font-bold">{mission.streak}</span>
               </div>
             )}
