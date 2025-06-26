@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { User, LogOut } from 'lucide-react';
 import AttributeBar from './AttributeBar';
@@ -21,6 +22,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
   const [character, setCharacter] = useState<Character | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [selectedAttribute, setSelectedAttribute] = useState<string>('all');
   const { toast } = useToast();
 
   const loadCharacter = async () => {
@@ -152,13 +154,13 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
   const activeMissions = character.missions.filter(m => !m.completed);
   const completedMissions = character.missions.filter(m => m.completed);
 
-  // Group missions by attributes
-  const missionsByAttribute = {
-    'Força': activeMissions.filter(m => m.related_attributes.includes('Força')),
-    'Disciplina': activeMissions.filter(m => m.related_attributes.includes('Disciplina')),
-    'Saúde': activeMissions.filter(m => m.related_attributes.includes('Saúde')),
-    'Inteligência': activeMissions.filter(m => m.related_attributes.includes('Inteligência'))
+  // Filter missions by selected attribute
+  const getFilteredMissions = (missions: Mission[]) => {
+    if (selectedAttribute === 'all') return missions;
+    return missions.filter(m => m.related_attributes.includes(selectedAttribute));
   };
+
+  const filteredActiveMissions = getFilteredMissions(activeMissions);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -217,13 +219,10 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
         </Card>
 
         {/* Missions */}
-        <Tabs defaultValue="by-attribute" className="space-y-4">
+        <Tabs defaultValue="active" className="space-y-4">
           <TabsList className="bg-gray-900 border-gray-700">
-            <TabsTrigger value="by-attribute" className="data-[state=active]:bg-white data-[state=active]:text-black">
-              Por Atributo
-            </TabsTrigger>
-            <TabsTrigger value="all-active" className="data-[state=active]:bg-white data-[state=active]:text-black">
-              Todas Ativas ({activeMissions.length})
+            <TabsTrigger value="active" className="data-[state=active]:bg-white data-[state=active]:text-black">
+              Missões Ativas ({activeMissions.length})
             </TabsTrigger>
             <TabsTrigger value="completed" className="data-[state=active]:bg-white data-[state=active]:text-black">
               Completadas ({completedMissions.length})
@@ -236,45 +235,38 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="by-attribute" className="space-y-6">
-            {Object.entries(missionsByAttribute).map(([attribute, missions]) => (
-              <div key={attribute}>
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <span>{attributeIcons[attribute]}</span>
-                  {attribute} ({missions.length})
-                </h3>
-                {missions.length === 0 ? (
-                  <Card className="bg-gray-900 border-gray-700">
-                    <CardContent className="text-center py-4">
-                      <p className="text-gray-400">Nenhuma missão ativa para {attribute}</p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {missions.map((mission, index) => (
-                      <MissionCard
-                        key={`${mission.title}-${index}`}
-                        mission={mission}
-                        onComplete={handleCompleteMission}
-                        isLoading={isActionLoading}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </TabsContent>
+          <TabsContent value="active" className="space-y-4">
+            {/* Attribute Filter */}
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-white font-medium">Filtrar por atributo:</span>
+              <Select value={selectedAttribute} onValueChange={setSelectedAttribute}>
+                <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectItem value="all">Todos os Atributos</SelectItem>
+                  <SelectItem value="Força">💪 Força</SelectItem>
+                  <SelectItem value="Disciplina">🧘 Disciplina</SelectItem>
+                  <SelectItem value="Saúde">❤️ Saúde</SelectItem>
+                  <SelectItem value="Inteligência">🧠 Inteligência</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <TabsContent value="all-active" className="space-y-4">
-            {activeMissions.length === 0 ? (
+            {filteredActiveMissions.length === 0 ? (
               <Card className="bg-gray-900 border-gray-700">
                 <CardContent className="text-center py-8">
-                  <p className="text-gray-400">Nenhuma missão ativa. Hora de criar algumas!</p>
+                  <p className="text-gray-400">
+                    {selectedAttribute === 'all' 
+                      ? 'Nenhuma missão ativa. Hora de criar algumas!' 
+                      : `Nenhuma missão ativa para ${selectedAttribute}`
+                    }
+                  </p>
                 </CardContent>
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {activeMissions.map((mission, index) => (
+                {filteredActiveMissions.map((mission, index) => (
                   <MissionCard
                     key={`${mission.title}-${index}`}
                     mission={mission}
