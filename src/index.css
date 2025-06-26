@@ -99,3 +99,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .pixel-art {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    image-rendering: -moz-crisp-edges;
+  }
+}

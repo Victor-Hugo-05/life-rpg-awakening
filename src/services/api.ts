@@ -39,7 +39,7 @@ export interface MissionTemplate {
   related_attributes: string[];
 }
 
-const API_BASE = 'https://life-rpg-backend.onrender.com/';
+const API_BASE = 'http://localhost:5000';
 
 export const api = {
   async getCharacter(name: string): Promise<Character> {
