@@ -1,3 +1,4 @@
+
 // Type definitions
 export interface Character {
   name: string;
@@ -13,8 +14,10 @@ export interface Mission {
   title: string;
   description: string;
   xp_reward: number;
+  difficulty: string;
   related_attributes: string[];
   completed: boolean;
+  streak?: number;
 }
 
 export interface AttributeProgress {
@@ -36,6 +39,7 @@ export interface MissionTemplate {
   title: string;
   description: string;
   xp_reward: number;
+  difficulty: string;
   related_attributes: string[];
 }
 
@@ -45,7 +49,7 @@ export const api = {
   async getCharacter(name: string): Promise<Character> {
     const response = await fetch(`${API_BASE}/character/${name}`);
     if (!response.ok) {
-      const errorText = await response.text(); // ← Veja o HTML real
+      const errorText = await response.text();
       console.error('Erro ao buscar personagem:', errorText);
       throw new Error('Personagem não encontrado');
     }
@@ -74,7 +78,7 @@ export const api = {
     mission: {
       title: string;
       description: string;
-      xp_reward: number;
+      difficulty: string;
       related_attributes: string[];
     }
   ): Promise<{ message: string }> {

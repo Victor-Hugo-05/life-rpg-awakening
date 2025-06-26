@@ -5,13 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 
 interface MissionFormProps {
   onSubmit: (mission: {
     title: string;
     description: string;
-    xp_reward: number;
+    difficulty: string;
     related_attributes: string[];
   }) => void;
   isLoading: boolean;
@@ -21,14 +22,20 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [xpReward, setXpReward] = useState(50);
+  const [difficulty, setDifficulty] = useState('Fácil');
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
 
   const attributes = [
     { name: 'Força', icon: '💪' },
     { name: 'Disciplina', icon: '🧘' },
-    { name: 'Carisma', icon: '🗣️' },
+    { name: 'Saúde', icon: '❤️' },
     { name: 'Inteligência', icon: '🧠' }
+  ];
+
+  const difficulties = [
+    { value: 'Fácil', label: '🟢 Fácil (30 XP)', color: 'text-green-400' },
+    { value: 'Médio', label: '🟡 Médio (50 XP)', color: 'text-yellow-400' },
+    { value: 'Difícil', label: '🔴 Difícil (70 XP)', color: 'text-red-400' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,14 +44,14 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
       onSubmit({
         title: title.trim(),
         description: description.trim(),
-        xp_reward: xpReward,
+        difficulty: difficulty,
         related_attributes: selectedAttributes
       });
       
       // Reset form
       setTitle('');
       setDescription('');
-      setXpReward(50);
+      setDifficulty('Fácil');
       setSelectedAttributes([]);
       setIsOpen(false);
     }
@@ -107,16 +114,24 @@ const MissionForm: React.FC<MissionFormProps> = ({ onSubmit, isLoading }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              Recompensa XP
+              Dificuldade
             </label>
-            <Input
-              type="number"
-              value={xpReward}
-              onChange={(e) => setXpReward(Number(e.target.value))}
-              min="1"
-              max="1000"
-              className="bg-black border-gray-600 text-white"
-            />
+            <Select value={difficulty} onValueChange={setDifficulty}>
+              <SelectTrigger className="bg-black border-gray-600 text-white">
+                <SelectValue placeholder="Selecione a dificuldade" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 border-gray-600">
+                {difficulties.map((diff) => (
+                  <SelectItem 
+                    key={diff.value} 
+                    value={diff.value}
+                    className={`text-white hover:bg-gray-700 ${diff.color}`}
+                  >
+                    {diff.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

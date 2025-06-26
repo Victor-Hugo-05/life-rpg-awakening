@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { User, RotateCcw, LogOut } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import AttributeBar from './AttributeBar';
 import MissionCard from './MissionCard';
 import MissionForm from './MissionForm';
@@ -69,7 +70,7 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
   const handleAddMission = async (mission: {
     title: string;
     description: string;
-    xp_reward: number;
+    difficulty: string;
     related_attributes: string[];
   }) => {
     try {
@@ -144,12 +145,20 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
   const attributeIcons: Record<string, string> = {
     'Força': '💪',
     'Disciplina': '🧘',
-    'Carisma': '🗣️',
+    'Saúde': '❤️',
     'Inteligência': '🧠'
   };
 
   const activeMissions = character.missions.filter(m => !m.completed);
   const completedMissions = character.missions.filter(m => m.completed);
+
+  // Group missions by attributes
+  const missionsByAttribute = {
+    'Força': activeMissions.filter(m => m.related_attributes.includes('Força')),
+    'Disciplina': activeMissions.filter(m => m.related_attributes.includes('Disciplina')),
+    'Saúde': activeMissions.filter(m => m.related_attributes.includes('Saúde')),
+    'Inteligência': activeMissions.filter(m => m.related_attributes.includes('Inteligência'))
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -165,11 +174,10 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
           </div>
           
           <div className="flex gap-2">
-            
             <Button
               onClick={onLogout}
               variant="outline"
-              className="border-gray-600 text-white bg-gray-800 hover:bg-gray-700"
+              className="border-gray-600 text-gray-300 bg-gray-800 hover:bg-gray-700 hover:text-white"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Sair
@@ -204,10 +212,13 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
         </Card>
 
         {/* Missions */}
-        <Tabs defaultValue="active" className="space-y-4">
+        <Tabs defaultValue="by-attribute" className="space-y-4">
           <TabsList className="bg-gray-900 border-gray-700">
-            <TabsTrigger value="active" className="data-[state=active]:bg-white data-[state=active]:text-black">
-              Missões Ativas ({activeMissions.length})
+            <TabsTrigger value="by-attribute" className="data-[state=active]:bg-white data-[state=active]:text-black">
+              Por Atributo
+            </TabsTrigger>
+            <TabsTrigger value="all-active" className="data-[state=active]:bg-white data-[state=active]:text-black">
+              Todas Ativas ({activeMissions.length})
             </TabsTrigger>
             <TabsTrigger value="completed" className="data-[state=active]:bg-white data-[state=active]:text-black">
               Completadas ({completedMissions.length})
@@ -220,7 +231,36 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="space-y-4">
+          <TabsContent value="by-attribute" className="space-y-6">
+            {Object.entries(missionsByAttribute).map(([attribute, missions]) => (
+              <div key={attribute}>
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                  <span>{attributeIcons[attribute]}</span>
+                  {attribute} ({missions.length})
+                </h3>
+                {missions.length === 0 ? (
+                  <Card className="bg-gray-900 border-gray-700">
+                    <CardContent className="text-center py-4">
+                      <p className="text-gray-400">Nenhuma missão ativa para {attribute}</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {missions.map((mission, index) => (
+                      <MissionCard
+                        key={`${mission.title}-${index}`}
+                        mission={mission}
+                        onComplete={handleCompleteMission}
+                        isLoading={isActionLoading}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="all-active" className="space-y-4">
             {activeMissions.length === 0 ? (
               <Card className="bg-gray-900 border-gray-700">
                 <CardContent className="text-center py-8">

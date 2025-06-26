@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { api, MissionTemplate } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
@@ -72,10 +72,28 @@ const MissionTemplateSelector: React.FC<MissionTemplateSelectorProps> = ({
     const icons: Record<string, string> = {
       'Força': '💪',
       'Disciplina': '🧘',
-      'Carisma': '🗣️',
+      'Saúde': '❤️',
       'Inteligência': '🧠'
     };
     return icons[attr] || '⭐';
+  };
+
+  const getDifficultyColor = (difficulty: string): string => {
+    const colors: Record<string, string> = {
+      'Fácil': 'border-green-500 bg-green-900',
+      'Médio': 'border-yellow-500 bg-yellow-900',
+      'Difícil': 'border-red-500 bg-red-900'
+    };
+    return colors[difficulty] || 'border-gray-700 bg-gray-900';
+  };
+
+  const getDifficultyLabel = (difficulty: string): string => {
+    const labels: Record<string, string> = {
+      'Fácil': '🟢 Fácil',
+      'Médio': '🟡 Médio', 
+      'Difícil': '🔴 Difícil'
+    };
+    return labels[difficulty] || difficulty;
   };
 
   if (loadingTemplates) {
@@ -108,7 +126,7 @@ const MissionTemplateSelector: React.FC<MissionTemplateSelectorProps> = ({
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {templates.map((template) => (
-          <Card key={template.id} className="bg-gray-900 border-gray-700">
+          <Card key={template.id} className={getDifficultyColor(template.difficulty)}>
             <CardHeader className="pb-3">
               <CardTitle className="text-white text-lg">{template.title}</CardTitle>
             </CardHeader>
@@ -120,8 +138,10 @@ const MissionTemplateSelector: React.FC<MissionTemplateSelectorProps> = ({
               
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-yellow-400" />
                   <span className="text-white font-medium">{template.xp_reward} XP</span>
+                  <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
+                    {getDifficultyLabel(template.difficulty)}
+                  </Badge>
                 </div>
                 
                 <div className="flex gap-1">
