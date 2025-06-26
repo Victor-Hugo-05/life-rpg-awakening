@@ -186,9 +186,14 @@ const Dashboard: React.FC<DashboardProps> = ({ characterName, onLogout }) => {
         </div>
 
         {/* Character Illustration */}
-        {character.attributes['Força'] && (
+        {character.attributes['Força'] && character.attributes['Disciplina'] && (
           <div className="mb-6">
-            <CharacterIllustration strengthXp={character.attributes['Força'].xp} />
+            <CharacterIllustration
+              strengthXp={character.attributes['Força'].xp}
+              disciplineXp={character.attributes['Disciplina'].xp}
+              healthXp={character.attributes['Saúde'].xp}
+              intelligenceXp={character.attributes['Inteligência'].xp}
+            />
           </div>
         )}
 
